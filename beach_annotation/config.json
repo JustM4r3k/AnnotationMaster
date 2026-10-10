@@ -7,16 +7,26 @@
   "detection": {
     "box_threshold": 0.25,
     "text_threshold": 0.20,
-    "tile_size": 1024,
+    "tile_size": 384,
     "tile_overlap": 0.25,
     "box_merge_iou": 0.85,
-    "mask_merge_iou": 0.85
+    "mask_merge_iou": 0.75
   },
   "segmentation": {
     "context_margin": 0.35,
     "minimum_crop_size": 256,
     "small_mask_pixels": 16,
     "review_quality_below": 0.70
+  },
+  "review": {
+    "large_mask_fraction": 0.20,
+    "scene_span_fraction": 0.85,
+    "scene_min_area_fraction": 0.02,
+    "containment_overlap": 0.90
+  },
+  "classification": {
+    "max_attempts": 2,
+    "max_new_tokens": 256
   },
   "prompts": {
     "can": ["drink can", "crushed aluminium can", "food can", "aerosol can"],

@@ -1,5 +1,9 @@
 # Beach litter annotation pipeline
 
+**Updated after the first five-image BeachLitter pilot.** For an existing
+installation, start with [RERUN.md](RERUN.md). Reuse your downloaded models and
+Python environment; run the updated code into a new output folder.
+
 This package creates **draft instance annotations for CVAT** from photographs.
 It runs Grounding DINO and SAM 2.1 locally on your VM. Qwen2.5-VL is an optional
 second opinion on the class. It can also preserve and supplement existing BePLi
@@ -23,6 +27,8 @@ are resolved relative to the script, so moving the whole project is fine.
 | `bepli_category_map.json` | Mapping of BePLi v2's 13 source names to your two plastic classes. |
 | `requirements.txt` | Pinned Python dependencies. |
 | `tests/test_pipeline.py` | Data integrity tests that do not need model weights. |
+| `tests/test_regressions.py` / `tests/fixtures/` | Regressions for the observed pilot failures; saved predictions are not ground truth. |
+| `RERUN.md` | Upgrade steps and the five-photo rerun command. |
 | `models/grounding-dino-base/` | Created by the model downloader. |
 | `models/sam2.1-hiera-large/` | Created by the model downloader. |
 | `models/Qwen2.5-VL-7B-Instruct/` | Created only with `--with-qwen`. |
@@ -164,11 +170,14 @@ apparently clean scenes.
 
 | Output file/folder | What you do with it |
 | --- | --- |
-| `annotations_draft.json` | Import into CVAT as COCO annotations. |
+| `annotations_draft.json` | Complete review master for CVAT, including uncertain and suspected-background proposals. |
 | `images_for_cvat.zip` | Upload as the task's images. Contains exactly the processed originals; created with `--pack-images`. |
-| `previews/` | Quick visual overlays for the first 20 photos. These are not training images. |
-| `review.csv` | Every annotation's provisional class and review flags; also lists images with no annotations. |
-| `summary.json` | Counts and any images left pending after an interrupted run. |
+| `previews/` | Three aligned panels per photo: candidates, uncertain/existing, and background to review. Background masks use outlines only. |
+| `review.csv` | All proposals, review groups, flags, Qwen reasons and scores; also lists images with no annotations. `image_object_id` matches preview numbers. |
+| `review_candidates.csv`, `review_uncertain.csv`, `review_background_review.csv`, `review_existing.csv` | Separate review queues; they are not training datasets. |
+| `review_groups.json` | The annotation IDs belonging to each queue in the complete COCO master. |
+| `summary.json` | Counts by review group and Qwen status, plus any pending images. |
+| `qwen_error.json` | Written if Qwen still produces invalid output after retries; contains the image, target box and raw answers. |
 | `checkpoints/` | Completed results per image, used by `--resume`. |
 | `run.json` / `runtime_versions.json` | Settings, model revisions, source hashes and installed versions. |
 
@@ -190,15 +199,33 @@ python annotate.py run \
   --pack-images
 ```
 
-Qwen receives the original crop, the target box coordinates inside it, and the
-seven class definitions. A valid suggestion becomes the draft class. The
-detector's original class and disagreements are retained as metadata.
+Qwen receives a tight unmarked target crop, a second context crop with a red
+outline identifying the same target, and the seven class definitions. The
+outline avoids relying on pixel coordinates that can become misleading after
+processor resizing. A valid suggestion becomes the draft class. The detector's
+original class and disagreements are retained as metadata.
 
-`uncertain`, `not_trash`, or malformed responses do **not** delete the proposal.
-It keeps its detector-assigned provisional class and receives a review flag.
-There is no eighth training class and no automatic conversion of uncertainty
-to `other_trash`. Qwen receives objects found by the detector; it cannot rescue
-objects that were never proposed.
+The prompt requests one JSON object with an explicit `label` and a `reason`,
+and shows concrete valid examples. The parser accepts only the seven class
+names, `uncertain`, or `not_trash`; it never infers a class from prose. Valid
+legacy status/class responses and singleton JSON lists are also supported.
+Malformed output is retried once with corrective instructions. If both attempts
+fail, the run **stops**, writes `qwen_error.json`, saves previously completed
+images and lists unfinished ones in `summary.json`. It cannot silently finish
+a Qwen run using only detector labels. Inspect the raw error before retrying;
+unchanged deterministic generation may repeat it. Changed code/config needs a
+new output directory.
+
+`uncertain` routes a proposal to the uncertain queue; `not_trash` routes it to
+background review. Both remain in the complete COCO master under the detector's
+provisional class until a person resolves them. There is no eighth training
+class and no automatic conversion of uncertainty to `other_trash`. Qwen receives
+objects found by the detector; it cannot rescue objects that were never proposed.
+
+Oversized masks are flagged as possible scene/background regions, regardless
+of SAM's quality score. Size is only a review heuristic: a large real piece of
+litter can also trigger it. A valid litter suggestion for a large region stays
+uncertain for inspection. No size rule automatically deletes an object.
 
 All three models share the selected GPU in this implementation. If Qwen causes
 an out-of-memory error, start with the baseline command without `--qwen` in a
@@ -272,7 +299,7 @@ Custom review attributes are included in COCO. Their visibility and round-trip
 depend on your CVAT label schema. `review.csv` and the original draft JSON
 remain the independent record; do not rely on unknown attributes surviving
 import/export. You can add text attributes such as `source`, `review_status`,
-`flags`, `qwen_status`, and `qwen_reason` to every CVAT label if you want them
+`flags`, `review_group`, `qwen_status`, and `qwen_reason` to every CVAT label if you want them
 in the editor.
 
 | Your training ID | COCO ID used here | Label |
@@ -313,17 +340,27 @@ Useful settings in `config.json`:
 | --- | ---: | --- |
 | `box_threshold` | 0.25 | Lowering it proposes more candidates, generally with more false detections. |
 | `text_threshold` | 0.20 | Controls the words retained in detector descriptions. |
-| `tile_size` | 1024 | Pixel width/height of additional detector crops; 0 disables tiled detection. |
+| `tile_size` | 384 | Pixel width/height of additional detector crops; 0 disables tiled detection. This activates tiles on the 765x575 pilot photos. |
 | `tile_overlap` | 0.25 | Overlap between detector crops. |
-| `box_merge_iou` / `mask_merge_iou` | 0.85 | Merge near-identical proposals, retaining competing classes for review. |
+| `box_merge_iou` / `mask_merge_iou` | 0.85 / 0.75 | Merge similar proposals, retaining competing classes and merged evidence for review. |
 | `minimum_crop_size` | 256 | Minimum side length of the context crop passed to SAM. |
 | `context_margin` | 0.35 | Extra context around the detector box for SAM. |
+| `review.large_mask_fraction` | 0.20 | Flag masks covering at least 20% of the photo for scene/background review. |
+| `review.scene_span_fraction` | 0.85 | Also flag masks spanning at least 85% of image width or height, if their area reaches the minimum below. |
+| `review.scene_min_area_fraction` | 0.02 | Minimum image-area fraction for the span heuristic; avoids treating every long thin object as background. |
+| `review.containment_overlap` | 0.90 | Flag a retained smaller mask mostly contained in another as a possible duplicate or part; keep both. |
+| `classification.max_attempts` | 2 | One initial Qwen answer plus one corrective retry. |
 
 These are starting settings, not measured optimal values. The full photograph
 is scanned in addition to the tiles. SAM receives a context crop per candidate
 so tiny objects are not always reduced with the entire beach image. This is
 slower than encoding each full image only once. Cropping cannot recover detail
 that was not captured in the photograph.
+
+Each pilot photo now has one full view plus six tiles, with seven detector
+prompt groups per view. Expect the detector stage to take longer. For much
+larger photos, tune tile size in a separate pilot before processing thousands
+of images. The script prints progress for each detector view and candidate.
 
 Detection scores, SAM quality estimates and Qwen responses are not calibrated
 probabilities that an annotation is correct. Competing prompts can refer to
@@ -338,12 +375,18 @@ python annotate.py validate --coco output/beachlitter_pilot50/annotations_draft.
 python -m unittest discover -s tests -v
 ```
 
-The supplied tests cover mask round-trips, coordinate coverage, ambiguous
-labels, existing-mask preservation, output integrity and resuming. They use
-synthetic images and mocked inference. **The pretrained GPU inference and a
-live CVAT import have not been run in the authoring environment.** Your first
-five-image run is the installation/integration check; it is also where you
-start assessing actual prediction quality.
+The 20 supplied tests cover mask round-trips, crop coverage, ambiguous labels,
+Qwen retries and failure reporting, review queues, existing-mask preservation,
+output integrity and resuming. Tests use synthetic images, mocked inference,
+and saved predictions from the first five-image pilot. They confirm that four
+observed oversized sea/sand masks move to background review, three near-duplicate
+masks merge, and the bottle/part overlap is retained for review. Saved predictions
+are not ground truth, so these checks do not establish model accuracy.
+
+**The updated pretrained GPU inference and a live CVAT import have not been run
+in the authoring environment.** Rerun five photos with the updated script before
+expanding the batch. In particular, natural objects can still be misclassified;
+review the actual new Qwen responses and all seven categories.
 
 ## References
 

@@ -21,7 +21,7 @@ import zipfile
 from datetime import datetime, timezone
 
 import numpy as np
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parent
 CLASS_NAMES = (
@@ -35,6 +35,9 @@ CATEGORIES = [
 EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tif", ".tiff"}
 COLORS = [(245, 91, 76), (47, 173, 235), (129, 101, 239), (220, 164, 38),
           (207, 115, 56), (56, 189, 132), (226, 98, 185)]
+REVIEW_DEFAULTS = {"large_mask_fraction": .20, "scene_span_fraction": .85,
+                   "scene_min_area_fraction": .02, "containment_overlap": .90}
+REVIEW_GROUPS = ("candidates", "uncertain", "background_review", "existing")
 
 
 def read_json(path):
@@ -171,6 +174,16 @@ def validate_config(config):
     sam = config["segmentation"]
     if sam["context_margin"] < 0 or sam["minimum_crop_size"] < 1:
         raise ValueError("Invalid SAM crop settings.")
+    for key, value in (REVIEW_DEFAULTS | config.get("review", {})).items():
+        if not 0 < value <= 1:
+            raise ValueError(f"Invalid review.{key}")
+    classification = config.get("classification", {})
+    attempts = classification.get("max_attempts", 2)
+    tokens = classification.get("max_new_tokens", 256)
+    if not isinstance(attempts, int) or not 1 <= attempts <= 5:
+        raise ValueError("classification.max_attempts must be an integer from 1 to 5.")
+    if not isinstance(tokens, int) or not 32 <= tokens <= 1024:
+        raise ValueError("classification.max_new_tokens must be an integer from 32 to 1024.")
 
 
 class ExistingAnnotations:
@@ -231,7 +244,7 @@ class ExistingAnnotations:
         for original in self.annotations[source_image["id"]]:
             ann = copy.deepcopy(original)
             attrs = ann.setdefault("attributes", {})
-            attrs.update({"source": "existing_coco", "review_status": "needs_review",
+            attrs.update({"source": "existing_coco", "review_status": "needs_review", "review_group": "existing",
                           "original_annotation_id": str(original["id"]),
                           "original_image_id": str(original["image_id"]),
                           "original_category": self.source_names[original["category_id"]]})
@@ -244,20 +257,79 @@ class ExistingAnnotations:
 
 
 def parse_qwen_response(text):
-    """Malformed or out-of-taxonomy output must never silently create a label."""
+    """Normalize ONLY explicit whitelisted labels, never guesses from prose.
+
+    Accept our compact label schema, valid legacy status/class_name responses,
+    a fenced JSON answer, or a singleton list. Reject conflicting fields and
+    the literal enum string that broke the first pilot.
+    """
     try:
-        start = text.index("{")
-        result, _ = json.JSONDecoder().raw_decode(text[start:])
-        status = result["status"]
-        label = result.get("class_name")
+        cleaned = text.strip()
+        if cleaned.startswith("```") and cleaned.endswith("```"):
+            cleaned = cleaned.split("\n", 1)[1].rsplit("```", 1)[0].strip()
+        result = json.loads(cleaned)
+        if isinstance(result, list) and len(result) == 1:
+            result = result[0]
+        if not isinstance(result, dict):
+            raise ValueError("Expected one JSON object")
+        if "status" in result:
+            status, label = result["status"], result.get("class_name")
+            if status != "suggestion" and label is not None:
+                raise ValueError("Non-trash/uncertain must use a null class_name")
+            if "label" in result and result["label"] != (label if status == "suggestion" else status):
+                raise ValueError("Conflicting response fields")
+        else:
+            label = result["label"]
+            status = "suggestion" if label in CLASS_NAMES else label
+            if "class_name" in result and result["class_name"] != (label if status == "suggestion" else None):
+                raise ValueError("Conflicting class_name")
         if status not in ("suggestion", "uncertain", "not_trash"):
             raise ValueError("Unknown status")
         if status == "suggestion" and label not in CLASS_NAMES:
             raise ValueError("Unknown class")
+        reason = result.get("reason", "")
+        if not isinstance(reason, str):
+            raise ValueError("Expected a string reason")
         return {"status": status, "class_name": label if status == "suggestion" else None,
-                "reason": str(result.get("reason", ""))[:600]}
-    except (ValueError, KeyError, TypeError):
+                "reason": reason[:600]}
+    except (ValueError, KeyError, TypeError, IndexError):
         return {"status": "parse_error", "class_name": None, "reason": text[:600]}
+
+
+class QwenClassificationError(RuntimeError):
+    def __init__(self, attempts):
+        self.attempts = attempts
+        super().__init__(f"Qwen returned invalid classification JSON after {len(attempts)} attempts; "
+                         "see qwen_error.json. Classification was NOT silently skipped")
+
+
+def classify_with_retry(generate, max_attempts=2):
+    """Separate validation/retry policy from GPU inference so it is testable."""
+    answers = []
+    for attempt in range(max_attempts):
+        answer = generate(answers[-1] if answers else None)
+        answers.append(answer)
+        parsed = parse_qwen_response(answer)
+        if parsed["status"] != "parse_error":
+            return dict(parsed, attempts=attempt + 1, raw_response=answer)
+        print(f"    Qwen format error (attempt {attempt + 1}/{max_attempts}).", flush=True)
+    raise QwenClassificationError(answers)
+
+
+def qwen_crops(image, box):
+    """A tight original crop plus a marked context view identifies tiny targets.
+
+    The first view has no drawn pixels over the object. A red outline in the
+    second view survives processor resizing, unlike numeric pixel coordinates.
+    """
+    tight = crop_window(box, image.width, image.height, .15, 24)
+    context = crop_window(box, image.width, image.height, .50, 96)
+    marked = image.crop(context)
+    draw = ImageDraw.Draw(marked)
+    draw.rectangle((max(0, box[0] - context[0] - 2), max(0, box[1] - context[1] - 2),
+                    min(marked.width - 1, box[2] - context[0] + 2),
+                    min(marked.height - 1, box[3] - context[1] + 2)), outline=(255, 0, 0), width=2)
+    return [image.crop(tight), marked]
 
 
 class Models:
@@ -305,7 +377,9 @@ class Models:
     def detect(self, image, classes):
         settings = self.config["detection"]
         candidates = []
-        for window in tile_windows(image.width, image.height, settings["tile_size"], settings["tile_overlap"]):
+        windows = list(tile_windows(image.width, image.height, settings["tile_size"], settings["tile_overlap"]))
+        for scan_index, window in enumerate(windows, 1):
+            print(f"  Detector view {scan_index}/{len(windows)}: {window}", flush=True)
             crop = image.crop(window)
             # Separate prompt groups make the target-class assignment explicit.
             # The returned phrases can be incomplete, so we retain them as evidence,
@@ -359,32 +433,80 @@ class Models:
     def classify(self, image, box):
         if self.qwen is None:
             return None
-        window = crop_window(box, image.width, image.height, 0.20, 96)
-        crop = image.crop(window)
-        target_box = [round(box[0] - window[0]), round(box[1] - window[1]),
-                      round(box[2] - window[0]), round(box[3] - window[1])]
+        crops = qwen_crops(image, box)
         instructions = (
-            f"Classify the target object at pixel box {target_box} in this {crop.width}x{crop.height} image. "
+            "Classify ONE target. Image 1 is a tight, unmarked crop of the target. "
+            "Image 2 shows context with a red rectangle around the SAME target; ignore the drawn red line. "
+            "Do not classify a different object elsewhere in the scene. "
             "Consider object type AND material. Use only this taxonomy: "
             "can=metal drink/food/aerosol cans, including crushed cans; "
             "plastic_bottle=recognisable plastic bottles; glass=glass bottles/jars/fragments; "
             "metal_other=metal excluding cans; paper_cardboard=paper/cardboard/paper cups; "
             "plastic_other=plastic excluding bottles, including bags/wrappers/foam; "
             "other_trash=cigarette butts/filters, rubber, textiles, other manufactured litter outside those classes. "
-            "Shells, stones, seaweed and driftwood are not target litter. "
-            "If material or object identity cannot be determined, return uncertain. "
+            "Sand, sky, seawater, shells, stones, seaweed and driftwood are not target litter. "
+            "For natural objects or background use the label not_trash. "
+            "If material or object identity cannot be determined, use the label uncertain. "
             "Do not use other_trash as a synonym for uncertain. "
-            'Return JSON only: {"status":"suggestion|uncertain|not_trash",'
-            '"class_name":"one of the seven class names, or null", "reason":"short explanation"}.'
+            "Return ONE JSON object with two keys: label and reason. "
+            "label must be exactly one of: " + ", ".join(CLASS_NAMES) + ", uncertain, not_trash. "
+            "Do not return coordinates, scores, multiple labels, or a list. "
+            'Format examples only (choose based on the actual images): '
+            '{"label":"plastic_bottle","reason":"Recognisable plastic bottle."} '
+            '{"label":"uncertain","reason":"Material is not visible."} '
+            '{"label":"not_trash","reason":"Natural driftwood."}'
         )
-        messages = [{"role": "user", "content": [{"type": "image"}, {"type": "text", "text": instructions}]}]
-        text = self.qwen_processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-        inputs = self.qwen_processor(text=[text], images=[crop], padding=True, return_tensors="pt").to(self.device)
-        with self.torch.inference_mode():
-            ids = self.qwen.generate(**inputs, max_new_tokens=200, do_sample=False)
-        answer = self.qwen_processor.batch_decode(
-            ids[:, inputs["input_ids"].shape[1]:], skip_special_tokens=True)[0]
-        return parse_qwen_response(answer)
+        cfg = self.config.get("classification", {})
+
+        def generate(previous):
+            messages = [{"role": "user", "content": [
+                {"type": "image"}, {"type": "image"}, {"type": "text", "text": instructions}]}]
+            if previous is not None:
+                messages.extend([
+                    {"role": "assistant", "content": previous},
+                    {"role": "user", "content": "That response failed the JSON/label validation. "
+                     "Classify the same target again. Reply only with one JSON object with label and reason. "
+                     "Use exactly one allowed label. If you cannot identify the target, reply "
+                     '{"label":"uncertain","reason":"Cannot identify the target."}'}])
+            prompt = self.qwen_processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+            inputs = self.qwen_processor(text=[prompt], images=crops, padding=True, return_tensors="pt").to(self.device)
+            with self.torch.inference_mode():
+                ids = self.qwen.generate(**inputs, max_new_tokens=cfg.get("max_new_tokens", 256), do_sample=False)
+            return self.qwen_processor.batch_decode(
+                ids[:, inputs["input_ids"].shape[1]:], skip_special_tokens=True)[0]
+
+        return classify_with_retry(generate, cfg.get("max_attempts", 2))
+
+
+def assign_review_group(ann, width, height, config):
+    """Route suspicious scene masks to review; size alone does not prove trash/non-trash."""
+    attrs = ann.setdefault("attributes", {})
+    if attrs.get("source") == "existing_coco":
+        attrs["review_group"] = "existing"
+        return
+    cfg = REVIEW_DEFAULTS | config.get("review", {})
+    flags = set(filter(None, attrs.get("flags", "").split(";")))
+    fraction = ann["area"] / (width * height)
+    attrs["mask_area_fraction"] = round(fraction, 6)
+    _, _, bw, bh = ann["bbox"]
+    scene_region = (fraction >= cfg["large_mask_fraction"] or
+                    (max(bw / width, bh / height) >= cfg["scene_span_fraction"] and
+                     fraction >= cfg["scene_min_area_fraction"]))
+    if scene_region:
+        flags.add("oversized_scene_region_check_background")
+    status = attrs.get("qwen_status")
+    if "merged_classification_disagreement" in flags:
+        group = "uncertain"
+    elif status == "not_trash":
+        group = "background_review"
+    elif scene_region and status != "suggestion":
+        group = "background_review"
+    elif status in ("uncertain", "parse_error") or flags:
+        group = "uncertain"
+    else:
+        group = "candidates"
+    attrs["review_group"] = group
+    attrs["flags"] = ";".join(sorted(flags))
 
 
 def draft_annotation(image, candidate, models, config):
@@ -402,9 +524,16 @@ def draft_annotation(image, candidate, models, config):
     category = candidate["category_id"]
     # Qwen is a second opinion. Uncertain/not_trash responses are retained for a
     # reviewer, with the detector's provisional class, rather than erased.
-    suggestion = models.classify(image, candidate["box"])
+    try:
+        suggestion = models.classify(image, candidate["box"])
+    except QwenClassificationError as exc:
+        exc.target_box = candidate["box"]
+        raise
     if suggestion:
         attrs.update({"qwen_status": suggestion["status"], "qwen_reason": suggestion["reason"]})
+        for key in ("attempts", "raw_response"):
+            if key in suggestion:
+                attrs["qwen_" + key] = suggestion[key]
         if suggestion["status"] == "suggestion":
             category = CLASS_NAMES.index(suggestion["class_name"]) + 1
             if category != candidate["category_id"]:
@@ -426,14 +555,16 @@ def draft_annotation(image, candidate, models, config):
     if quality < config["segmentation"]["review_quality_below"]:
         flags.append("low_sam_quality")
     attrs["flags"] = ";".join(flags)
-    return {"category_id": category, "segmentation": rle, "bbox": bbox, "area": area,
-            "iscrowd": 0, "attributes": attrs}
+    ann = {"category_id": category, "segmentation": rle, "bbox": bbox, "area": area,
+           "iscrowd": 0, "attributes": attrs}
+    assign_review_group(ann, image.width, image.height, config)
+    return ann
 
 
-def merge_masks(proposals, threshold, height, width):
+def merge_masks(proposals, threshold, height, width, config=None):
     """Merge nearly identical AI masks, recording alternate classes for review."""
     kept, rles = [], []
-    for ann in proposals:
+    for ann in sorted(proposals, key=lambda a: a["attributes"].get("detector_score", 0), reverse=True):
         rle = segmentation_rle(ann["segmentation"], height, width)
         duplicate = None
         if rle is not None:
@@ -447,14 +578,42 @@ def merge_masks(proposals, threshold, height, width):
             rles.append(rle)
         else:
             old, new = duplicate["attributes"], ann["attributes"]
+            # Retain discarded proposal evidence; never average object masks.
+            evidence = json.loads(old.get("merged_evidence", "[]"))
+            evidence.append({"category_id": ann["category_id"], "attributes": copy.deepcopy(new)})
+            old["merged_evidence"] = json.dumps(evidence, ensure_ascii=False)
             old["candidate_classes"] = ",".join(sorted(set(
                 old["candidate_classes"].split(",") + new["candidate_classes"].split(",") +
                 [CLASS_NAMES[ann["category_id"] - 1], CLASS_NAMES[duplicate["category_id"] - 1]])))
             flags = set(filter(None, (old["flags"] + ";" + new["flags"]).split(";")))
             if len(old["candidate_classes"].split(",")) > 1:
                 flags.add("class_disagreement")
+            if (old.get("qwen_status") != new.get("qwen_status") or
+                    (old.get("qwen_status") == "suggestion" and ann["category_id"] != duplicate["category_id"])):
+                flags.add("merged_classification_disagreement")
             old["flags"] = ";".join(sorted(flags))
             old["merged_proposals"] = int(old.get("merged_proposals", 0)) + 1
+    cfg = REVIEW_DEFAULTS | (config or {}).get("review", {})
+    # A bottle cap inside a bottle may be a part or a separate object. Retain
+    # both and flag containment instead of treating every contained mask as a duplicate.
+    for i, ann in enumerate(kept):
+        if rles[i] is None or ann["area"] / (height * width) >= cfg["large_mask_fraction"]:
+            continue
+        for j in range(i):
+            old = kept[j]
+            if (rles[j] is None or old["area"] / (height * width) >= cfg["large_mask_fraction"] or
+                    box_iou(xyxy(ann["bbox"]), xyxy(old["bbox"])) == 0):
+                continue
+            iou = float(mask_api().iou([rles[i]], [rles[j]], [0])[0, 0])
+            intersection = iou * (ann["area"] + old["area"]) / (1 + iou)
+            if intersection / min(ann["area"], old["area"]) >= cfg["containment_overlap"]:
+                for item in (ann, old):
+                    attrs = item["attributes"]
+                    flags = set(filter(None, attrs.get("flags", "").split(";")))
+                    flags.add("contained_overlap_check_duplicate_or_part")
+                    attrs["flags"] = ";".join(sorted(flags))
+    for ann in kept:
+        assign_review_group(ann, width, height, config or {})
     return kept
 
 
@@ -521,6 +680,8 @@ def export_records(records, output, source=None, pending=None):
             "licenses": source.licenses if source else [], "images": [], "annotations": [],
             "categories": copy.deepcopy(CATEGORIES)}
     rows = []
+    groups = {key: [] for key in REVIEW_GROUPS}
+    qwen_counts = {}
     for image_id, record in enumerate(sorted(records, key=lambda r: r["file_name"]), 1):
         image_entry = {"id": image_id, "file_name": record["file_name"], "width": record["width"],
                        "height": record["height"], "review_status": "needs_review"}
@@ -531,43 +692,97 @@ def export_records(records, output, source=None, pending=None):
                     image_entry[key] = original_image[key]
         data["images"].append(image_entry)
         if not record["annotations"]:
-            rows.append([record["file_name"], "", "", "needs_review", "no_annotations_not_a_verified_negative"])
-        for original in record["annotations"]:
+            rows.append([record["file_name"], "", "", "", "needs_review", "uncertain",
+                         "no_annotations_not_a_verified_negative", "", "", "", ""])
+        for object_id, original in enumerate(record["annotations"], 1):
             ann = copy.deepcopy(original)
             ann["id"], ann["image_id"] = len(data["annotations"]) + 1, image_id
+            attrs = ann.setdefault("attributes", {})
+            attrs["image_object_id"] = object_id
+            group = attrs.get("review_group", "existing" if attrs.get("source") == "existing_coco" else "uncertain")
+            groups[group].append(ann["id"])
+            if attrs.get("qwen_status"):
+                status = attrs["qwen_status"]
+                qwen_counts[status] = qwen_counts.get(status, 0) + 1
             data["annotations"].append(ann)
-            rows.append([record["file_name"], ann["id"], CLASS_NAMES[ann["category_id"] - 1],
-                         "needs_review", ann.get("attributes", {}).get("flags", "")])
+            rows.append([record["file_name"], ann["id"], object_id, CLASS_NAMES[ann["category_id"] - 1],
+                         "needs_review", group, attrs.get("flags", ""), attrs.get("qwen_status", ""),
+                         attrs.get("qwen_reason", ""), attrs.get("detector_score", ""), attrs.get("sam_quality", "")])
     if source and source.info:
         data["info"]["original_dataset_info"] = source.info
     summary = validate_coco(data)
     summary.update({"status": "DRAFT", "pending_images": pending or [],
-                    "all_images_require_review": True})
+                    "all_images_require_review": True, "review_groups": {k: len(v) for k, v in groups.items()},
+                    "qwen_status_counts": qwen_counts})
     write_json(output / "annotations_draft.json", data)
+    write_json(output / "review_groups.json", {"description": "Annotation IDs in the master annotations_draft.json. "
+               "These are review queues, not approved labels or negative images.", "groups": groups})
     write_json(output / "summary.json", summary)
-    with (output / "review.csv").open("w", newline="", encoding="utf-8") as f:
-        writer = csv.writer(f)
-        writer.writerow(["file_name", "annotation_id", "provisional_class", "review_status", "flags"])
-        writer.writerows(rows)
+    header = ["file_name", "annotation_id", "image_object_id", "provisional_class", "review_status", "review_group",
+              "flags", "qwen_status", "qwen_reason", "detector_score", "sam_quality"]
+    for group in (None, *REVIEW_GROUPS):
+        path = output / (f"review_{group}.csv" if group else "review.csv")
+        with path.open("w", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f)
+            writer.writerow(header)
+            writer.writerows(row for row in rows if group is None or row[5] == group)
     return summary
 
 
 def save_preview(image, annotations, path):
-    overlay = np.array(image, dtype=np.float32)
-    for ann in annotations:
-        rle = segmentation_rle(ann["segmentation"], image.height, image.width)
-        if rle is not None:
-            selected = mask_api().decode(rle).astype(bool)
-            color = np.array(COLORS[ann["category_id"] - 1])
-            overlay[selected] = 0.60 * overlay[selected] + 0.40 * color
-    preview = Image.fromarray(np.clip(overlay, 0, 255).astype(np.uint8))
+    """Three aligned views with local object IDs matching review.csv.
+
+    Background suspects get outlines only, so large sea/sand masks cannot flood
+    the candidate view. A legend keeps class names readable for tiny objects.
+    """
+    panels = [("CANDIDATES", {"candidates"}, (63, 220, 166)),
+              ("UNCERTAIN / EXISTING", {"uncertain", "existing"}, (255, 190, 72)),
+              ("BACKGROUND TO REVIEW", {"background_review"}, (195, 201, 216))]
+    scale = min(1., 800 / image.width)
+    width, height = max(360, round(image.width * scale)), round(image.height * scale)
+    view_width = round(image.width * scale)
+    try:
+        font = ImageFont.truetype("DejaVuSans.ttf", 16)
+        small = ImageFont.truetype("DejaVuSans.ttf", 14)
+    except OSError:
+        font, small = ImageFont.load_default(), ImageFont.load_default()
+    items = [[(i, ann) for i, ann in enumerate(annotations, 1)
+              if ann.get("attributes", {}).get("review_group", "uncertain") in groups]
+             for _, groups, _ in panels]
+    total_height = height + 102 + 23 * max(1, *(len(p) for p in items))
+    preview = Image.new("RGB", (3 * width + 32, total_height), (20, 27, 40))
     draw = ImageDraw.Draw(preview)
-    for ann in annotations:
-        color = COLORS[ann["category_id"] - 1]
-        draw.rectangle(xyxy(ann["bbox"]), outline=color, width=2)
-        draw.text((ann["bbox"][0], max(0, ann["bbox"][1] - 12)), CLASS_NAMES[ann["category_id"] - 1], fill=color)
-    draw.rectangle((0, 0, 295, 20), fill=(20, 20, 20))
-    draw.text((5, 4), "DRAFT - check all objects and boundaries", fill="white")
+    draw.text((8, 8), "DRAFT - check every image for missed objects. Numbers match image_object_id in review.csv.",
+              font=small, fill="white")
+    for column, ((title, groups, color), selected_items) in enumerate(zip(panels, items)):
+        left = 8 + column * (width + 8)
+        overlay = np.array(image, dtype=np.float32)
+        if "background_review" not in groups:
+            for _, ann in selected_items:
+                if "oversized_scene_region" in ann.get("attributes", {}).get("flags", ""):
+                    continue
+                rle = segmentation_rle(ann["segmentation"], image.height, image.width)
+                if rle is not None:
+                    mask = mask_api().decode(rle).astype(bool)
+                    overlay[mask] = .78 * overlay[mask] + .22 * np.array(color)
+        view = Image.fromarray(np.clip(overlay, 0, 255).astype(np.uint8)).resize((view_width, height))
+        preview.paste(view, (left, 64))
+        draw.text((left, 37), f"{title} ({len(selected_items)})", font=font, fill=color)
+        for row, (number, ann) in enumerate(selected_items):
+            x0, y0, x1, y1 = xyxy(ann["bbox"])
+            bounds = (left + x0 * scale, 64 + y0 * scale, left + x1 * scale, 64 + y1 * scale)
+            draw.rectangle(bounds, outline=color, width=2)
+            label = str(number)
+            tx = min(left + view_width - 24, max(left, bounds[0]))
+            ty = max(64, bounds[1] - 18)
+            draw.rectangle((tx, ty, tx + 8 + 9 * len(label), ty + 18), fill=(20, 27, 40))
+            draw.text((tx + 3, ty), label, font=small, fill=color)
+            attrs = ann.get("attributes", {})
+            status = attrs.get("qwen_status", "detector only") if attrs.get("source") != "existing_coco" else "source mask"
+            draw.text((left, 76 + height + row * 23),
+                      f"{number}: {CLASS_NAMES[ann['category_id'] - 1]}  [{status}]", font=small, fill=color)
+        if not selected_items:
+            draw.text((left, 76 + height), "No proposals in this group; image still needs review.", font=small, fill=color)
     path.parent.mkdir(parents=True, exist_ok=True)
     preview.save(path)
 
@@ -672,6 +887,10 @@ def run(args):
                 if record["source_sha256"] != current_hash or record["file_name"] != name:
                     raise ValueError(f"Image changed since its checkpoint: {name}. Use a new output folder.")
                 records.append(record)
+                if index <= args.previews:
+                    preview_path = output / "previews" / (name + ".png")
+                    if not preview_path.is_file():
+                        save_preview(load_image(path), record["annotations"], preview_path)
                 print("  Reusing completed checkpoint.", flush=True)
                 continue
             image = load_image(path)
@@ -680,9 +899,18 @@ def run(args):
                 models = Models(config, model_root, args.device, args.qwen)
             candidates = models.detect(image, classes)
             print(f"  {len(candidates)} candidate objects; creating masks...", flush=True)
-            proposals = [draft_annotation(image, item, models, config) for item in candidates]
-            proposals = merge_masks(proposals, config["detection"]["mask_merge_iou"], image.height, image.width)
+            proposals = []
+            for object_index, item in enumerate(candidates, 1):
+                print(f"  Object {object_index}/{len(candidates)}: mask" +
+                      (" + Qwen classification" if args.qwen else ""), flush=True)
+                proposals.append(draft_annotation(image, item, models, config))
+            proposals = merge_masks(proposals, config["detection"]["mask_merge_iou"], image.height, image.width, config)
             flag_existing_overlaps(existing, proposals, image.height, image.width)
+            for ann in proposals:
+                assign_review_group(ann, image.width, image.height, config)
+            group_counts = {group: sum(a["attributes"]["review_group"] == group for a in proposals)
+                            for group in REVIEW_GROUPS if group != "existing"}
+            print("  Review groups: " + ", ".join(f"{k}={v}" for k, v in group_counts.items()), flush=True)
             record = {"file_name": name, "width": image.width, "height": image.height,
                       "source_sha256": current_hash, "review_status": "needs_review",
                       "annotations": existing + proposals}
@@ -697,6 +925,10 @@ def run(args):
                 save_preview(image, record["annotations"], output / "previews" / (name + ".png"))
     except (Exception, KeyboardInterrupt) as exc:
         failed = exc
+        if isinstance(exc, QwenClassificationError):
+            write_json(output / "qwen_error.json", {"file_name": name,
+                       "target_box_xyxy": getattr(exc, "target_box", None), "raw_attempts": exc.attempts,
+                       "message": str(exc)})
     finally:
         done = {r["file_name"] for r in records}
         summary = export_records(records, output, source, [n for n in names if n not in done])
@@ -708,6 +940,7 @@ def run(args):
     if args.pack_images:
         pack_images(records, image_root, output / "images_for_cvat.zip")
         print(f"CVAT image upload: {output / 'images_for_cvat.zip'}", flush=True)
+    (output / "qwen_error.json").unlink(missing_ok=True)
     print("Review EVERY image in CVAT. Zero detections are not verified negatives.", flush=True)
 
 
