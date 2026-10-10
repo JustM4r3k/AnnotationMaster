@@ -1,0 +1,15 @@
+{
+  "pet_bottle": "plastic_bottle",
+  "other_bottle": "plastic_bottle",
+  "plastic_bag": "plastic_other",
+  "box_shaped_case": "plastic_other",
+  "other_container": "plastic_other",
+  "rope": "plastic_other",
+  "other_string": "plastic_other",
+  "fishing_net": "plastic_other",
+  "buoy": "plastic_other",
+  "other_fishing_gear": "plastic_other",
+  "styrene_foam": "plastic_other",
+  "others": "plastic_other",
+  "fragment": "plastic_other"
+}

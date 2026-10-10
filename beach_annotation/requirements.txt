@@ -1,0 +1,10 @@
+# First install the matching torch/torchvision GPU wheels from README.md.
+# These versions deliberately match the Python interfaces used by annotate.py.
+transformers==4.57.1
+huggingface-hub==0.35.3
+tokenizers==0.22.1
+safetensors==0.6.2
+numpy==2.2.6
+Pillow==11.3.0
+pycocotools==2.0.10
+tqdm==4.67.1

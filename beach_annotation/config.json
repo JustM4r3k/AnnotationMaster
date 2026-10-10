@@ -1,0 +1,30 @@
+{
+  "models": {
+    "detector": {"repo_id": "IDEA-Research/grounding-dino-base", "folder": "grounding-dino-base"},
+    "segmenter": {"repo_id": "facebook/sam2.1-hiera-large", "folder": "sam2.1-hiera-large"},
+    "classifier": {"repo_id": "Qwen/Qwen2.5-VL-7B-Instruct", "folder": "Qwen2.5-VL-7B-Instruct"}
+  },
+  "detection": {
+    "box_threshold": 0.25,
+    "text_threshold": 0.20,
+    "tile_size": 1024,
+    "tile_overlap": 0.25,
+    "box_merge_iou": 0.85,
+    "mask_merge_iou": 0.85
+  },
+  "segmentation": {
+    "context_margin": 0.35,
+    "minimum_crop_size": 256,
+    "small_mask_pixels": 16,
+    "review_quality_below": 0.70
+  },
+  "prompts": {
+    "can": ["drink can", "crushed aluminium can", "food can", "aerosol can"],
+    "plastic_bottle": ["plastic bottle", "crushed plastic bottle"],
+    "glass": ["glass bottle", "glass jar", "broken glass", "glass fragment"],
+    "metal_other": ["metal bottle cap", "metal lid", "aluminium foil", "metal pull tab", "scrap metal"],
+    "paper_cardboard": ["piece of paper", "cardboard", "paper cup", "paper tissue", "drink carton"],
+    "plastic_other": ["plastic bag", "plastic wrapper", "plastic bottle cap", "plastic container", "plastic fragment", "styrofoam", "plastic straw"],
+    "other_trash": ["cigarette butt", "cigarette filter", "discarded shoe", "discarded fabric", "rubber glove"]
+  }
+}
