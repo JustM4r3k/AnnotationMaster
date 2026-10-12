@@ -1,0 +1,977 @@
+{
+  "description": "Saved first-five pilot output for regression tests; not ground-truth labels.",
+  "images": [
+    {
+      "id": 1,
+      "file_name": "000000.jpg",
+      "width": 765,
+      "height": 575,
+      "review_status": "needs_review"
+    },
+    {
+      "id": 2,
+      "file_name": "000001.jpg",
+      "width": 765,
+      "height": 575,
+      "review_status": "needs_review"
+    },
+    {
+      "id": 3,
+      "file_name": "000002.jpg",
+      "width": 765,
+      "height": 575,
+      "review_status": "needs_review"
+    },
+    {
+      "id": 4,
+      "file_name": "000003.jpg",
+      "width": 765,
+      "height": 575,
+      "review_status": "needs_review"
+    },
+    {
+      "id": 5,
+      "file_name": "000004.jpg",
+      "width": 743,
+      "height": 557,
+      "review_status": "needs_review"
+    }
+  ],
+  "annotations": [
+    {
+      "category_id": 3,
+      "segmentation": {
+        "size": [
+          575,
+          765
+        ],
+        "counts": "i0h2W?00000000000O11O0000000000000000000000000001O000000000000000000000000000000000000000000000000000000000000001O0000000000000000000000000000000000000000000000000000000000010N100000000000000001O00000000000000000000000000000000000000000000000000000000000000000000000000000000000001O00000000O100001O000000000000000000000000000000000000000001O0000000000000000000000000000000000000000000001O0000000000000000000000000000000000000000000001O000000000000000000000000000000000000000000000001O000000000000000000000000000000000000000000000001O01O0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001O00000000000000000000000000000000000000000000000001O0001O000O11O00000O1000000000000000000000000001O00000000000000000000000000000000000000000000O1001O0000000000000000000000000000000000000001O000000000000000000000000000000000000000000000001O0000000000000000000000000000001OO10000000000000000001O0000O10000001O0000000000000000000000000000000000000000000000000000000000000000000000000000000000000001O00000000000000000000000001O000000000000000000000000000000000000000000000000000000001O0000000000000000000000O1001O0000000000000000O100000000001O0000000000000001O0000O1001O0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001O00000000000000000000000000000000000000000001O0000000000000000000000000000000000000000000000000000000000000001O000000000000000000000000000000000000000000000000000000000000000000001O000001O0000O100001O0000000000000000000000000000mN"
+      },
+      "bbox": [
+        0.0,
+        24.0,
+        765.0,
+        105.0
+      ],
+      "area": 70187,
+      "iscrowd": 0,
+      "attributes": {
+        "source": "ai_proposal",
+        "review_status": "needs_review",
+        "detector_class": "glass",
+        "detector_phrase": "broken glass",
+        "detector_score": 0.461354,
+        "sam_quality": 0.993682,
+        "candidate_classes": "glass",
+        "flags": ""
+      },
+      "id": 1,
+      "image_id": 1
+    },
+    {
+      "category_id": 2,
+      "segmentation": {
+        "size": [
+          575,
+          765
+        ],
+        "counts": "n^Z42la0101N100O2O000O101O0O1000001N1001O1O2N2M3Nigf8"
+      },
+      "bbox": [
+        246.0,
+        334.0,
+        22.0,
+        12.0
+      ],
+      "area": 168,
+      "iscrowd": 0,
+      "attributes": {
+        "source": "ai_proposal",
+        "review_status": "needs_review",
+        "detector_class": "plastic_bottle",
+        "detector_phrase": "crushed plastic bottle",
+        "detector_score": 0.384956,
+        "sam_quality": 0.904661,
+        "candidate_classes": "plastic_bottle,glass",
+        "flags": "class_disagreement"
+      },
+      "id": 2,
+      "image_id": 1
+    },
+    {
+      "category_id": 4,
+      "segmentation": {
+        "size": [
+          575,
+          765
+        ],
+        "counts": "P`;5ja000000000000O11O000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001NQXo;"
+      },
+      "bbox": [
+        20.0,
+        275.0,
+        62.0,
+        6.0
+      ],
+      "area": 309,
+      "iscrowd": 0,
+      "attributes": {
+        "source": "ai_proposal",
+        "review_status": "needs_review",
+        "detector_class": "metal_other",
+        "detector_phrase": "metal pull tab",
+        "detector_score": 0.351699,
+        "sam_quality": 0.916417,
+        "candidate_classes": "glass,metal_other,other_trash,paper_cardboard",
+        "flags": "class_disagreement",
+        "merged_proposals": 2
+      },
+      "id": 3,
+      "image_id": 1
+    },
+    {
+      "category_id": 7,
+      "segmentation": {
+        "size": [
+          575,
+          765
+        ],
+        "counts": "RQd94ja02O0O100O100O100O010O10O100O100O1Oj]_3"
+      },
+      "bbox": [
+        548.0,
+        320.0,
+        18.0,
+        11.0
+      ],
+      "area": 139,
+      "iscrowd": 0,
+      "attributes": {
+        "source": "ai_proposal",
+        "review_status": "needs_review",
+        "detector_class": "other_trash",
+        "detector_phrase": "cigarette butt",
+        "detector_score": 0.336308,
+        "sam_quality": 0.90724,
+        "candidate_classes": "other_trash",
+        "flags": ""
+      },
+      "id": 4,
+      "image_id": 1
+    },
+    {
+      "category_id": 5,
+      "segmentation": {
+        "size": [
+          575,
+          765
+        ],
+        "counts": "Sn:1la04N0O100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001O00000000002LRfn;"
+      },
+      "bbox": [
+        19.0,
+        275.0,
+        64.0,
+        6.0
+      ],
+      "area": 366,
+      "iscrowd": 0,
+      "attributes": {
+        "source": "ai_proposal",
+        "review_status": "needs_review",
+        "detector_class": "paper_cardboard",
+        "detector_phrase": "piece",
+        "detector_score": 0.294618,
+        "sam_quality": 0.90458,
+        "candidate_classes": "paper_cardboard",
+        "flags": ""
+      },
+      "id": 5,
+      "image_id": 1
+    },
+    {
+      "category_id": 3,
+      "segmentation": {
+        "size": [
+          575,
+          765
+        ],
+        "counts": "d3Y>f300000000000000000000000000000000000000jF[LR4e3mK\\LS4d3lK^LS4b3lK_LT4a3kKaLT4_3kKbLU4^3kKbLU4^3kKbLV4]3jKcLU4^3kKbLU4^3kKbLU4^3kKbLU4^3kKbLU4^3kKbLU4^3kKbLU4_3jKaLV4_3jKaLW4^3iKbLW4^3iKbLW4]3kKbLT4_3lKaLT4_3lKaLT4`3kK`LU4`3kK`LU4`3kK`LU4`3kK`LV4_3iKbLW4^3jKaLV4_3jKaLU4`3kK`LU4`3kK`LU4`3kK`LU4`3kK`LU4`3kK`LU4`3kK`LU4`3kK`LU4`3kK`LU4`3kK`LU4a3jK_LV4a3jK_LV4a3jK_LV4a3jK_LV4a3jK_LV4a3jK_LV4a3jK_LV4a3jK_LV4a3jK_LV4a3jK_LV4a3jK_LV4a3jK_LV4a3jK_LV4a3jK_LV4a3jK_LV4a3jK_LV4`3kK`LU4`3lK_LT4a3lK_LT4b3kK^LU4b3kK]LV4c3jK]LV4c3jK]LV4c3kK[LV4e3R500000000000000001O00O11O0000000001O00O100000000000000000000000000000000000000000000000000000000000000000001O0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001O00000001OO10000000000001O1O000000O101O0000000000O1000000001O0O11N1001O000000000000000000000000000000000000000O101O0001O00gHVL=j3l6000eHULb0k3i6O10hHVL;j3m600001O000000000000000O1000000000000001O0000O101O00000000000001O000000O10000001O0000000000000000O101O0001O000000000000000000000000000000000000O100000000001O000000000000000000001O00000000O100O1001O00001O0000000000000000O10000O100001O00O1000000000000001O0000000000O100000000000000000000000000000000000000000000000000000001O00000000000000000000000000001O001O0000001OO1O100000001O0O01000000000000000000000000000000000000000000000001OO10000001O00000000000000000000000fEPLe6P4WIWLg6h3YIYLf6g3ZIZLe6f3[IZLe6f3[IZLe6f3[IZLd6g3\\IYLd6g3\\IYLd6g3\\IYLd6g3\\IYLd6g3\\IZLc6f3]IZLc6f3]IZLc6f3^IYLb6g3^IYLb6g3^IXLd6g3\\IZLb6g3^IYLb6g3^IZLa6f3_IZLa6f3_IZLa6f3_IZLa6f3_IZLa6f3_IZLVOHa4n3ZLYLTOJb4m3ZLYLTOJb4m3ZLYLROLe4j3YLZLQOJ^MNX7n3YLZLQOMf4i3YL[LoNNf4i3ZLYLoN0f4g3[LYLoN1e4f3\\LYLnN3e4d3]LYLnNFdM9Q7h3]LZLmNEgM7o6j3]LZLSOLa4i3\\L\\LkNDkM5o6k3[L\\LROJc4j3[L\\LROId4k3[L[LPOJg4j3YL\\LiNEkM5R7k3ZL[LiNEkM6Q7j3[L[LhNGmM2P7l3[L[LhNFoM1o6n3YL\\LiNEZ5o3mK\\LhNF[5n3nK[LgNG[5n3nK[LgNG[5n3oKZLfNH[5n3oKZLfNH[5n3oKZLfNH\\5m3nK[LeNI]5l3nK[LeNJ\\5k3oK[LdNK\\5k3PLZLdNK\\5k3PLZLcNL]5j3PLZLcNM\\5i3QLZLcNM\\5i3RLYLbNN\\5j3QLXLcNN\\5j3RLRL^LOS27\\5h3SLPL`L0R27\\5h3YLQLZN8]5g3XLRL[N7]5g3YLQLYN:]5e3`N\\L_1d3aN\\L_1d3`N]L`1c3`NZLQJG_7o3`NZLQJG_7P4_N]La1b3`N]L`1c3`N]L`1c3`N]L`1c3`N^L_1b3aN^L_1b3cN]L\\1b3jN^LQ1b3oN_LP1a3PO`Lo0`3PObLo0^3QObLo0^3QOaLP1_3PO_LR1a3nN^LS1b3mN^LS1b3mN^LS1b3mN^LS1b3lN_LT1a3lN]LV1c3jN\\LW1d3iN[LX1e3hN[LW1f3hN[LY1d3gN\\LY1e3fN[LZ1e3fN[LZ1e3fNZL[1f3eNZL[1f3eNYL\\1g3cNZL]1f3cNZL]1f3cNZL]1f3cNYL^1g3bNXL_1h3aNXL_1h3aNYL]1h3cNXL\\1i3dNXL[1h3dNXL]1g3dNYL]1f3cNZL]1f3cNZL\\1g3dNYL\\1g3dNYL\\1g3dNYL\\1g3dNXL]1h3cNXL]1i3bNXL]1h3cNXL]1h3cNXL]1h3cNWL^1i3bNWL^1i3aNXL_1h3aNXL_1h3aNXL_1h3aNXL_1h3aNXL_1h3aNXLQJF[7R4dNXLQJF[7R4eNWL^1i3bNWL^1i3lMoKXK8l6i3kMPLYK6o6h3hMSLXK5P7h3hMSLWK6Q7g3hMSLWK6Q7g3gMULWK4Q7h3hMTLWK4Q7h3hMTLWK4R7g3gMULVK5S7f3gMULVK4T7g3fMULWK3S7h3fMULWK3R7j3fMSLXK2S7k3eMSLZKOR7n3dMSL\\KKS7Q4`MULU3l3kLTLT3m3lLSLT3m3lLSLT3m3lLSLT3m3lLSLU3l3kLTLU3l3kLTLU3l3jLULV3k3jLULW3j3iLVLW3j3iLVLW3j3iLVLW3j3iLVLW3i3jLXLT3i3lLWLT3i3lLVLU3j3kLVLU3j3kLVLU3j3kLVLU3k3jLULU3l3kLTLU3l3kLTLV3k3jLULV3k3jLULV3k3jLULV3j3kLWLS3j3mLVLT3i3lLVLU3j3kLVLV3i3jLWLV3i3jLXLT3i3lLWLT3i3lLWLT3j3kLVLU3j3kLVLU3j3kLVLU3i3lLWLT3i3lLXLS3h3lLXLU3h3kLXLU3h3kLXLU3i3jLWLV3i3jLXLU3h3kLXLT3i3kLXLU3h3kLXLV3g3jLYLV3g3jLYLV3g3jLYLU3h3kLXLU3h3jLYLV3g3jLXLX3g3hLYLX3g3hLYLX3g3hLZLW3f3hL[LX3e3hL[LX3e3hLZLY3f3gLZLX3g3hLYLX3g3gL[LX3e3hL[LX3e3hL[LX3e3hL[LX3e3hL[LX3e3hL[LX3e3hL[LX3e3hL[LX3e3hL[LX3f3gLZLY3f3gLZLY3f3gLZLY3f3gLZLY3f3gLZLY3f3gLZLY3f3gLZLY3f3gLZLY3f3iLXLW3h3oLnKU3R4\\500000000000000000000000000000000001OO1000000000000000000000000000000000000001O000000001O0000kK"
+      },
+      "bbox": [
+        0.0,
+        116.0,
+        765.0,
+        459.0
+      ],
+      "area": 340144,
+      "iscrowd": 0,
+      "attributes": {
+        "source": "ai_proposal",
+        "review_status": "needs_review",
+        "detector_class": "glass",
+        "detector_phrase": "glass fragment",
+        "detector_score": 0.283917,
+        "sam_quality": 0.992961,
+        "candidate_classes": "glass",
+        "flags": ""
+      },
+      "id": 6,
+      "image_id": 1
+    },
+    {
+      "category_id": 3,
+      "segmentation": {
+        "size": [
+          575,
+          765
+        ],
+        "counts": "Xjb82ma01O2N1O1O0000001O00000001O0000000000000000000001O000001O0001O0000000000000000001O0001O0000000000000000000001O0000000001O00001O3M2Mdee3"
+      },
+      "bbox": [
+        489.0,
+        241.0,
+        66.0,
+        12.0
+      ],
+      "area": 492,
+      "iscrowd": 0,
+      "attributes": {
+        "source": "ai_proposal",
+        "review_status": "needs_review",
+        "detector_class": "glass",
+        "detector_phrase": "glass fragment",
+        "detector_score": 0.269979,
+        "sam_quality": 0.925154,
+        "candidate_classes": "glass",
+        "flags": ""
+      },
+      "id": 7,
+      "image_id": 1
+    },
+    {
+      "category_id": 7,
+      "segmentation": {
+        "size": [
+          575,
+          765
+        ],
+        "counts": "olY41na01N1O101O0O101O0O100O101O00O0100001N2Nm]h8"
+      },
+      "bbox": [
+        245.0,
+        334.0,
+        20.0,
+        11.0
+      ],
+      "area": 138,
+      "iscrowd": 0,
+      "attributes": {
+        "source": "ai_proposal",
+        "review_status": "needs_review",
+        "detector_class": "other_trash",
+        "detector_phrase": "cigarette butt",
+        "detector_score": 0.258588,
+        "sam_quality": 0.859697,
+        "candidate_classes": "other_trash",
+        "flags": ""
+      },
+      "id": 8,
+      "image_id": 1
+    },
+    {
+      "category_id": 3,
+      "segmentation": {
+        "size": [
+          575,
+          765
+        ],
+        "counts": "f1l1=R<[1nCeNR<[1oCZNUN1O1m=d1oCZNUN011k=d1PD[NTN0R>f1hC_NXNKj=g1lCfNS<[1VBYN>O?5QO0l=c1kBXN7=n<[1lBXN66RONk=d1mBYN55TOMj=d1[DYNf;g1Y20000OUBYN`;g1_DZNa;f1`DYN`;h1[21m_OZN2Oa?g1_@WNj?h1W@XNi?h1\\@XN_?h1W@YN2O10f?k1Y@VN0O00:0F0Q?l1m@VN5050F0R?j1n@UNd01\\OOS?l1cAUN`>k1`ATNa>i1j@XNd0Oa>h1l@ZNc01]>e1PA[Nb02\\>c1RAZNc03[>d1PAZNc0N]O3o>e1QAYNd0O^O2l>l1eAZN[>f1eAZN[>g1SAoM>:_>f1TAPN?4a>k1QAQN?3`>k1RARN?1`>o1j01O0Y@oM`?Q27O100000Y@PN_?P2a@PN_?P28000000000Y@QN^?o190000000X@RN_?o1]@oM02c?n1b@PN_?P280000000Y@PN_?P280000001O000000O11O000Y@oM`?Q2700002N1X@lMc?T2]@lMc?T242N001O1O0000M31O3M0^@gM^?Y2b@gM^?Y24O1001O0000000000001\\@gM`?\\21O000M30000000O2O002O4LO00000001O1O1O0000001O4KJl@cMT?]2l@_M10T?`27000h@`MP?a2n@bMQ?_2n@aMR?`2m@_MT?c2l@[MT?e2l@[MT?e2l@\\MS?d2m@\\MR?i2000O1002N001OO1O11O001OO100O100001OO1000000002N1OO1O11O1O00001O0000001O0000000000001O0000000000000000KTAWMl>i2VAUMj>k2VAVMi>j2WAVMi>j2WAUMj>k2TAWMl>n201O1O00N2JUAXMl>m2O2O00001O01O01O0000O1001O001N1001O00000KWAUMh>Q31O0O11N100O11O001OO10000000O11O1O0O110O00001O00000001OO10O10000001O0O4M0000010N100000O1001O000000001O00000000O100001O1O0001N11N100000O1001O2N0000000000O10fA`LU>_360cAbLY>^3gAbLY>^3400001O0001NdAdLV>\\3jAgLT>Y3lAgLT>Z3jAgLV>a3000001O000001O0000O100000O20NJmAcLR>Z3RBfLm=Z3SBeLn=[3SBdLm=\\3SBdLm=\\3SBdLm=\\3RBeLn=[3RBeLn=[3RBeLn=\\3QBdLo=_3oA`LQ>`3oA_LR>a3nA_LR>a3oA^LQ>b3oA^LQ>a3PB_L=1n<_3fB`L;3n<\\3gBbL;2n<[3hBbL=1k<]3hBbL=1k<]3]CdLc<\\3\\CdLe<_3XCaLh<b3UC^Lk<g3d01OHQB_LP>`39L31N1000OjAdLk=\\3UBdLk=\\3TBeLl=^3nAeLR>d300000000000000000MmAZLS>i300000000000000dBVLc<i3]CYLb<g3]CZLc<g3]CXLc<h3]CYLb<g3^CXLc<h3]CXLc<h3j000001O0000O11YCULX;k3gDVLY;j3fDWLZ;i3fDWLZ;i3fDWLZ;i3^100000000000000000000000000000000001O00001O000000001O000000000000000000000000001O00000000O11O000000000000000000000000000000000000000000000000001O00O1001O0000000000001O00000001OO101O0001O00001O000000000000O11O0000O2N100000000000000000000000000000000000000000001O000000000000000000001O000000000001OO101O0000000000O11O0001OO1000000000000000001O0000000000000bFlKQ5T4nJnKQ5R4oJoKP5Q4lJiKnK8U9o3QKPLo4P4RKoKn4Q4RKPLm4P4SKPLm4P4TKPLk4P4UKPLk4Q4TKoKl4Q4TKoKl4Q4TKoKl4Q4SKQLl4o3RKTLm4l3RKULn4k3SKTLm4l3SKTLm4l3SKTLm4l3TKSLl4m3UKSLj4m3VKSLj4m3UKTLk4l3TKVLk4j3UKVLk4k3UKTLk4l3VKTLi4l3XKSLh4m3VKULj4k3UKVLk4j3TKWLl4i3TKXLk4h3TKZLk4f3UKZLk4f3mJaLT5_3jJcLV5]3jJcLV5]3jJcLV5]3kJbLU5_3kJaLT5_3nJ_LR5a3PK]LQ5b3PKgKSLd0l8e3XKXLg4h3ZKXLd4i3\\KWLd4i3]KVLd4i3\\KWLd4i3]KVLc4j3\\KXLb4j3]KXLa4h3_KXLa4h3cKTL]4l3dKTL[4l3eKTL[4l3]K\\Lc4d3\\K]Ld4c3\\K]Ld4c3\\K^Lc4c3\\K]Ld4c3]K\\Lc4c3^K]Lb4c3_K]L`4c3`K]L`4d3_K[Lb4e3^K[Lb4e3^KZLc4e3^K[Lb4e3^K[Lb4e3^K[Lb4e3^KZLc4f3[K\\Le4e3YK\\Lg4d3XK^Lg4c3WK_Lh4a3XK_Lh4a3XK_Lh4a3WK`Li4`3XK_Lh4a3YKgKUL=c8l3bKSL^4m3bKSL^4m3eKPL[4P4fKoKZ4Q4gKmKZ4S4hKdKaK2i8Y4h4000010O00000000000000000000000001O0O1001O0000000000010O00O100001O00O100O100000000000001O01O0000O11O000000000001O00O1000000010O00000O11O0000O1000000000000000001O000000O11O01O00O100O101O01O0^K"
+      },
+      "bbox": [
+        0.0,
+        53.0,
+        765.0,
+        522.0
+      ],
+      "area": 351014,
+      "iscrowd": 0,
+      "attributes": {
+        "source": "ai_proposal",
+        "review_status": "needs_review",
+        "detector_class": "glass",
+        "detector_phrase": "broken glass",
+        "detector_score": 0.2794,
+        "sam_quality": 0.988342,
+        "candidate_classes": "glass",
+        "flags": ""
+      },
+      "id": 9,
+      "image_id": 2
+    },
+    {
+      "category_id": 3,
+      "segmentation": {
+        "size": [
+          575,
+          765
+        ],
+        "counts": "[oR81na01O0O1000001O000001OO10000000000000001O000000000000001N1000000000001O00000000001O000000000000000000000000000000001N100000000000000000000000000000000000000000001O00000000000O10000000001O000000000000000000000000000000000000000000001O0000000000000000000000000O10001O00000000000000000000001O000000000000000000000000000O2O0000000000000O10000000000000001O000000000000000000000000001O0000000000000000000000001O000O1000000000000000000000000000000000000000000000001O00000000000000000O10000000000000001O00000000000000000000000000001O00000000000000000000000000000000001N100000000000000000000000001O000O100000000000001bL"
+      },
+      "bbox": [
+        461.0,
+        109.0,
+        304.0,
+        34.0
+      ],
+      "area": 5612,
+      "iscrowd": 0,
+      "attributes": {
+        "source": "ai_proposal",
+        "review_status": "needs_review",
+        "detector_class": "glass",
+        "detector_phrase": "broken glass",
+        "detector_score": 0.270649,
+        "sam_quality": 0.961897,
+        "candidate_classes": "glass",
+        "flags": ""
+      },
+      "id": 10,
+      "image_id": 2
+    },
+    {
+      "category_id": 2,
+      "segmentation": {
+        "size": [
+          575,
+          765
+        ],
+        "counts": "b^Q:1ma010O01000000O100O100000000V^OMha08N0OJ[^O2ea0N[^O3da0M\\^O4ca0L^^O3ba0M^^O3ba0M_^O2aa0N_^O3`a0M`^O3`a0M`^O3`a0M`^O3`a0M`^O2aa0N_^O2aa0N_^O2aa0N_^O2aa0N_^O2aa0N_^O2aa0M`^O4_a0L`^O5`a0L^^O5ba040H_^O3`a0M`^O4_a0Kb^O7\\a0Jc^O6]a0Jc^O7\\a0Id^O7]a06O000O1O1M2L51O104K3N1O0O2N1O100O00001O2O02M1O01OMEc^O:Wa0Fk^O0O9Ua0Kh^OM38Ua0Nk^O1Va0Oi^O1Ya092O1Nd^OCXa0=g^ODZa0`0O01O10O100O101O0N2N2O1O10[OP_O;\\a0N1O1O1O1O1O2LUde1"
+      },
+      "bbox": [
+        572.0,
+        258.0,
+        97.0,
+        36.0
+      ],
+      "area": 1241,
+      "iscrowd": 0,
+      "attributes": {
+        "source": "ai_proposal",
+        "review_status": "needs_review",
+        "detector_class": "plastic_bottle",
+        "detector_phrase": "crushed plastic bottle",
+        "detector_score": 0.263202,
+        "sam_quality": 0.828555,
+        "candidate_classes": "plastic_bottle",
+        "flags": ""
+      },
+      "id": 11,
+      "image_id": 2
+    },
+    {
+      "category_id": 7,
+      "segmentation": {
+        "size": [
+          575,
+          765
+        ],
+        "counts": "P]P;3ha05N100001O00001O0000010O0000000O100O100O010O10O02O0ORPn1"
+      },
+      "bbox": [
+        627.0,
+        334.0,
+        27.0,
+        10.0
+      ],
+      "area": 167,
+      "iscrowd": 0,
+      "attributes": {
+        "source": "ai_proposal",
+        "review_status": "needs_review",
+        "detector_class": "other_trash",
+        "detector_phrase": "cigarette butt",
+        "detector_score": 0.374314,
+        "sam_quality": 0.904063,
+        "candidate_classes": "other_trash,paper_cardboard",
+        "flags": "class_disagreement",
+        "merged_proposals": 1
+      },
+      "id": 12,
+      "image_id": 3
+    },
+    {
+      "category_id": 3,
+      "segmentation": {
+        "size": [
+          575,
+          765
+        ],
+        "counts": "X3f1Y`000000000O10000000000000000000000O100000000000001O000O10000000000000000000000000000O10000000000000000000000000000O1000001O000000000000000O10000000000000000000000O100000000000000000000O1000000000000000000O100000000000001O0000000O1000000000000000000000000000000000000O1000000000001O00000000000000000000000000O100000000000O100000000000000000000000000000000000001N10000000000000000000000O10000000000000000000000O100000000000000000000O1000000000000000001O0O1000000000000O10000000000O100000000O10000000000000000O1000000000000000000O10000000000000001O00001O000000000000001O0O100000000000000000000000000000000000000000000O100000000000O100O100000000O11O0000000O10000000000000000000001O00O100000000001O0O100000000000000000000000000000000O100000000000000000000000000O100000000000000000000O100000000000000000000000000O101O00000000000O1000000000000O1000000O10000O1000000000000000000000000O100000000000001O0000000000001O0000001O1OO1N20000001O0000010O0000O1O1000000000000010O000000000000000000001O000000O10000001O00000001O0000O10O1001O0O1000000000000000000000000000000000000000000000000000000000001N10000O2O0O100000001O1O000O10ied3"
+      },
+      "bbox": [
+        0.0,
+        104.0,
+        557.0,
+        54.0
+      ],
+      "area": 15505,
+      "iscrowd": 0,
+      "attributes": {
+        "source": "ai_proposal",
+        "review_status": "needs_review",
+        "detector_class": "glass",
+        "detector_phrase": "broken glass",
+        "detector_score": 0.331827,
+        "sam_quality": 0.963078,
+        "candidate_classes": "glass",
+        "flags": ""
+      },
+      "id": 13,
+      "image_id": 3
+    },
+    {
+      "category_id": 4,
+      "segmentation": {
+        "size": [
+          575,
+          765
+        ],
+        "counts": "T?1120N00000060g17U=On@J00002001j17U=Jo@00N0020N022i17T=2QAE0221h17U=NQAH00000020N2i19V=NQAG0223f17W=DQA0000000000000000200g1;W=ORAF13f19V=LSAH0N22NNh1>U=MSAE0008f17V=DTAO0N000020N0020Nf1`0U=OWAGd1;U=GUAJ0O11O1f1>T=OWABO1e1?T=DWAL000N00020Ng1c0Q=MXAE0Kf1d0R=GXAG22NMb1f0U=FYAD17a1?U=]OYAN0N00000002000Na1i0T=D[AC0008`1c0U=C[AO^1>U=B]AI02]1d0U=]O^AG000000022NN002\\1l0U=_OaAHO1[1i0U=_O_AH02Z1h0W=G_A_OZ1k0V=UOaA0OJ00021OO1Y1Q1V=TOaA81FX1n0V=]OaAF1OW1o0V=^ObAC10V1P1U=^OdA]O00000011OOW1W1U=DeAXOV1T1T=EeAZOT1R1W=DeAZOS1S1W=SOfAK0K0O11ONS1[1U=SOhA01ER1Y1U=hNiAc00[OS1Z1S=iNjA0OK0>1DQ1\\1T=hNkAO16NE22o0]1U=gNjAb01ZOo0^1T=hNlAa00YOP1^1T=`NlA2000?0E0KP1`1R=aNnAN00002a0NA0N0000o0c1S=cNnAK1d01]Om0a1S=gNnA:0\\O13l0a1U=^NnA0000?0@3OM0m0d1T=`NoAN0O1`0O_O40L0l0e1T=`NPBK00011c02^Oh0c1V=`NPBLO00e01]Oj0a1V=^NoAN0040N=NE0O20NOj0d1V=`NPBL=:CH5OKOi0d1X=fNoAF4a01@KOh0d1Y=\\NoA;194_Ob0b1Y=[NRB2N0002NN=0D60b0d1W=]NRB1O31:8A<f1[=aNPBJ004>2A?e1Z=kNWBOOB?c1Z=[NRB20000000N60J0020O036N>c1Z=lN^BADO0O<06g1[=cNSBF00020N6=4C8f1Z=gNTBC031M1`06B:c1Z=hNTBC00020N20N00205:I8f1Z=jNUBC2=5@<e1Y=iNmCW1R<hNTBD1O10`1d1[<iNSBC00h1e1T<jNTBAi1d1S<kNVBAN24NY1d1_<mNTB_O00020N00002000R1b1i<kNSBE0N0000000000024NP1b1i<POVB^OM2000NZ1b1d<lNTBBN0000000a1a1]<nNSBAO0000000000020W1`1f<eNQB00K60J000000020X1_1e<ROXB_OI1_1^1a<ROPBA40LN0000Y1^1f<ZOQBXO00020N000020R1]1l<cNPB60K0100004NL000000000X1[1h<nNPB43GMN0NY1[1g<nNPBG30O000f1Z1X<RORBFNN20000000X10gNY1o=nNPBI30O060H0`10bNY1m=SORBD01l1OTNX1n=XOXBCMML0\\10dNY1P>XOPB_O20N31MO00020Y1X1e<UOQBD71LNL000Z10fNW1P>\\OVB@MMM0^1W1a<YOUDg0k;[OUB^O:0n0W1c<XOQBBR2U1n;^OQDa0P<[OTDd0l;]OWB@MOM0\\1S1d<[OnAD8O`1R1[<[OmADR2Q1Q<\\OmACQ2Q1R<]OmABP2P1T<[OlAD11n1P1U<_OnA_Om1R1U<_OoCa0R<^OnCb0R<^OnCb0S<^OlCb0U<ZOnCe0T<[OlCd0U<\\OjCc0X<]OgCc0[<XOhCh0Z<WOeCi0_<RObCm0h>0001O001O000001O01O00000000O11OO11O01OO100000000001O00O11O0001O001O0000O10000O0110OO2O0000010O000000O1O1000001N101N10001N2O001O1O2N2N0O2O1O1O1O1O1O1O3MffT:"
+      },
+      "bbox": [
+        0.0,
+        398.0,
+        186.0,
+        177.0
+      ],
+      "area": 8939,
+      "iscrowd": 0,
+      "attributes": {
+        "source": "ai_proposal",
+        "review_status": "needs_review",
+        "detector_class": "metal_other",
+        "detector_phrase": "scrap metal",
+        "detector_score": 0.291729,
+        "sam_quality": 0.898052,
+        "candidate_classes": "metal_other",
+        "flags": ""
+      },
+      "id": 14,
+      "image_id": 3
+    },
+    {
+      "category_id": 2,
+      "segmentation": {
+        "size": [
+          575,
+          765
+        ],
+        "counts": "fo[92ka03L3N3M2O7I8H:F6K1O00001O0001O2N6nNX_Oa0l`0YOa_O<Za0FWZf3"
+      },
+      "bbox": [
+        534.0,
+        127.0,
+        20.0,
+        46.0
+      ],
+      "area": 588,
+      "iscrowd": 0,
+      "attributes": {
+        "source": "ai_proposal",
+        "review_status": "needs_review",
+        "detector_class": "plastic_bottle",
+        "detector_phrase": "crushed plastic bottle",
+        "detector_score": 0.515197,
+        "sam_quality": 0.958413,
+        "candidate_classes": "can,plastic_bottle",
+        "flags": "class_disagreement"
+      },
+      "id": 15,
+      "image_id": 4
+    },
+    {
+      "category_id": 7,
+      "segmentation": {
+        "size": [
+          575,
+          765
+        ],
+        "counts": "SVj:3la02M200O010000O010O010O0010O0001O01IM_^O4`a060001O0001O010O1O10O01O010O00100O10O010O0010O00001O00001O000O2N3LVUf1"
+      },
+      "bbox": [
+        616.0,
+        298.0,
+        52.0,
+        22.0
+      ],
+      "area": 467,
+      "iscrowd": 0,
+      "attributes": {
+        "source": "ai_proposal",
+        "review_status": "needs_review",
+        "detector_class": "other_trash",
+        "detector_phrase": "discarded shoe rubber glove",
+        "detector_score": 0.387635,
+        "sam_quality": 0.941597,
+        "candidate_classes": "other_trash",
+        "flags": ""
+      },
+      "id": 16,
+      "image_id": 4
+    },
+    {
+      "category_id": 7,
+      "segmentation": {
+        "size": [
+          575,
+          765
+        ],
+        "counts": "gcQ<2ka02O1O1O000000000O01000000O2O1N]oR1"
+      },
+      "bbox": [
+        686.0,
+        406.0,
+        16.0,
+        17.0
+      ],
+      "area": 82,
+      "iscrowd": 0,
+      "attributes": {
+        "source": "ai_proposal",
+        "review_status": "needs_review",
+        "detector_class": "other_trash",
+        "detector_phrase": "cigarette butt",
+        "detector_score": 0.335269,
+        "sam_quality": 0.884263,
+        "candidate_classes": "other_trash",
+        "flags": ""
+      },
+      "id": 17,
+      "image_id": 4
+    },
+    {
+      "category_id": 4,
+      "segmentation": {
+        "size": [
+          575,
+          765
+        ],
+        "counts": "fo[92ka03L3N3M2O2N1O101N100000000001N6K3L5KQmf3"
+      },
+      "bbox": [
+        534.0,
+        127.0,
+        19.0,
+        19.0
+      ],
+      "area": 259,
+      "iscrowd": 0,
+      "attributes": {
+        "source": "ai_proposal",
+        "review_status": "needs_review",
+        "detector_class": "metal_other",
+        "detector_phrase": "metal bottle cap",
+        "detector_score": 0.332435,
+        "sam_quality": 0.941463,
+        "candidate_classes": "metal_other",
+        "flags": ""
+      },
+      "id": 18,
+      "image_id": 4
+    },
+    {
+      "category_id": 7,
+      "segmentation": {
+        "size": [
+          575,
+          765
+        ],
+        "counts": "kld22la01O1N2O1N100O010O0010O000100O01O2O1N2Nf^]:"
+      },
+      "bbox": [
+        151.0,
+        90.0,
+        20.0,
+        26.0
+      ],
+      "area": 137,
+      "iscrowd": 0,
+      "attributes": {
+        "source": "ai_proposal",
+        "review_status": "needs_review",
+        "detector_class": "other_trash",
+        "detector_phrase": "cigarette butt cigarette filter",
+        "detector_score": 0.256595,
+        "sam_quality": 0.919726,
+        "candidate_classes": "other_trash",
+        "flags": ""
+      },
+      "id": 19,
+      "image_id": 4
+    },
+    {
+      "category_id": 4,
+      "segmentation": {
+        "size": [
+          557,
+          743
+        ],
+        "counts": "`cQ25Wa03M2N2O1O1N2O002N002N001O1N101O00001O000000000O10O1000000O10000O10000O10000O10000O10000O101N1000000O2N2O2L8Hmcd9"
+      },
+      "bbox": [
+        120.0,
+        338.0,
+        55.0,
+        26.0
+      ],
+      "area": 1073,
+      "iscrowd": 0,
+      "attributes": {
+        "source": "ai_proposal",
+        "review_status": "needs_review",
+        "detector_class": "metal_other",
+        "detector_phrase": "metal bottle cap",
+        "detector_score": 0.50444,
+        "sam_quality": 0.960949,
+        "candidate_classes": "can,glass,metal_other,other_trash,plastic_bottle,plastic_other",
+        "flags": "class_disagreement",
+        "merged_proposals": 1
+      },
+      "id": 20,
+      "image_id": 5
+    },
+    {
+      "category_id": 3,
+      "segmentation": {
+        "size": [
+          557,
+          743
+        ],
+        "counts": "c0]2P?01O01O000000000000000000000000000000000000000000000000000000000000000000001O00000000000000000001O0001N100000000001O000000000000O100001O00000000000001O000000000000O11O0000000000000000000000000000000000000000000000000000000000000000001O0000000000000000O11O000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001O000000000000000000000001O00000000000000O2O01O000000000000000000000000000000000000000000000000000000000000000001O00000000000000000000000000000000000000000000000000000000000000000000000001O00000000000001O00000000000000000000000000000000000000000000000000000000000000000001O01O000000000000000000000000000000000000000000000000000000000000000001O00000000000000000001O000000O100001O0000000000000001O00000000000000000000000000000000000000000000001O0000000000000000000000000001O000000000000000001O00000000000000000000000001O00000000000000000001O00000001O0000000000000000000001O00O10001O01O000000000001O00000000000000001O000000000001O00000001O000000000000000000000000001O01O00000000000001O00000000000000000000000001O000001O0000000000000000000000000001O0000000000000001O0000000001O00000000000001O00000000000001O000000000000000001O000000000000000001O0000000001O00000000000001O0O100O10000001O1O001O00000001O00O11O000000000001O000000000000001O000001O0000000000000001O0000000001O00000000000000000000000000000000001N100001O00000000001O000001O000000000001O00000000000001O00000000000001O00000000000001O0001O00000000000000000000001O000cN"
+      },
+      "bbox": [
+        0.0,
+        19.0,
+        743.0,
+        111.0
+      ],
+      "area": 60517,
+      "iscrowd": 0,
+      "attributes": {
+        "source": "ai_proposal",
+        "review_status": "needs_review",
+        "detector_class": "glass",
+        "detector_phrase": "broken glass",
+        "detector_score": 0.475987,
+        "sam_quality": 0.990996,
+        "candidate_classes": "glass",
+        "flags": ""
+      },
+      "id": 21,
+      "image_id": 5
+    },
+    {
+      "category_id": 7,
+      "segmentation": {
+        "size": [
+          557,
+          743
+        ],
+        "counts": "Zbj74Xa02O1O001O00000001O2MQcc4"
+      },
+      "bbox": [
+        460.0,
+        365.0,
+        11.0,
+        8.0
+      ],
+      "area": 75,
+      "iscrowd": 0,
+      "attributes": {
+        "source": "ai_proposal",
+        "review_status": "needs_review",
+        "detector_class": "other_trash",
+        "detector_phrase": "cigarette butt",
+        "detector_score": 0.431468,
+        "sam_quality": 0.806156,
+        "candidate_classes": "other_trash",
+        "flags": ""
+      },
+      "id": 22,
+      "image_id": 5
+    },
+    {
+      "category_id": 7,
+      "segmentation": {
+        "size": [
+          557,
+          743
+        ],
+        "counts": "l^P33Ya02O00000O10000000000O01000000O2N2NglY9"
+      },
+      "bbox": [
+        177.0,
+        188.0,
+        18.0,
+        7.0
+      ],
+      "area": 92,
+      "iscrowd": 0,
+      "attributes": {
+        "source": "ai_proposal",
+        "review_status": "needs_review",
+        "detector_class": "other_trash",
+        "detector_phrase": "cigarette butt",
+        "detector_score": 0.410215,
+        "sam_quality": 0.820277,
+        "candidate_classes": "other_trash",
+        "flags": ""
+      },
+      "id": 23,
+      "image_id": 5
+    },
+    {
+      "category_id": 2,
+      "segmentation": {
+        "size": [
+          557,
+          743
+        ],
+        "counts": "WnQ72Xa04M2M3N2M3N1N2N2O0O02O0O2O1N3M3L5L[^X5"
+      },
+      "bbox": [
+        415.0,
+        181.0,
+        18.0,
+        34.0
+      ],
+      "area": 255,
+      "iscrowd": 0,
+      "attributes": {
+        "source": "ai_proposal",
+        "review_status": "needs_review",
+        "detector_class": "plastic_bottle",
+        "detector_phrase": "plastic bottle crushed plastic bottle",
+        "detector_score": 0.374717,
+        "sam_quality": 0.919408,
+        "candidate_classes": "plastic_bottle,glass,paper_cardboard,other_trash",
+        "flags": "class_disagreement"
+      },
+      "id": 24,
+      "image_id": 5
+    },
+    {
+      "category_id": 7,
+      "segmentation": {
+        "size": [
+          557,
+          743
+        ],
+        "counts": "Pnh79Ra04N1O1O0O101O000000000001O002N2N4I^]a4"
+      },
+      "bbox": [
+        457.0,
+        360.0,
+        18.0,
+        17.0
+      ],
+      "area": 264,
+      "iscrowd": 0,
+      "attributes": {
+        "source": "ai_proposal",
+        "review_status": "needs_review",
+        "detector_class": "other_trash",
+        "detector_phrase": "cigarette butt",
+        "detector_score": 0.307726,
+        "sam_quality": 0.624562,
+        "candidate_classes": "other_trash",
+        "flags": "low_sam_quality"
+      },
+      "id": 25,
+      "image_id": 5
+    },
+    {
+      "category_id": 7,
+      "segmentation": {
+        "size": [
+          557,
+          743
+        ],
+        "counts": "Yl^33Za0000O100O1O2O2M2O1N2O0O2O000O1001O000O10001OLDW_O;i`05ODX_O5h`0KY_O3i`0MW_O2i`0NW_O2j`0MW_O2i`0OV_O1k`0OT_O0n`071O0O2O0O2O0O10O01000001O3L10`f[8"
+      },
+      "bbox": [
+        203.0,
+        463.0,
+        47.0,
+        21.0
+      ],
+      "area": 507,
+      "iscrowd": 0,
+      "attributes": {
+        "source": "ai_proposal",
+        "review_status": "needs_review",
+        "detector_class": "other_trash",
+        "detector_phrase": "discarded shoe",
+        "detector_score": 0.304457,
+        "sam_quality": 0.938539,
+        "candidate_classes": "other_trash",
+        "flags": ""
+      },
+      "id": 26,
+      "image_id": 5
+    },
+    {
+      "category_id": 6,
+      "segmentation": {
+        "size": [
+          557,
+          743
+        ],
+        "counts": "dYd63Ya0101N100O100O1000000O2O00001O0O10000000000001O3M4Kdfa5"
+      },
+      "bbox": [
+        390.0,
+        160.0,
+        26.0,
+        12.0
+      ],
+      "area": 228,
+      "iscrowd": 0,
+      "attributes": {
+        "source": "ai_proposal",
+        "review_status": "needs_review",
+        "detector_class": "plastic_other",
+        "detector_phrase": "plastic bottle cap",
+        "detector_score": 0.266363,
+        "sam_quality": 0.934335,
+        "candidate_classes": "plastic_other",
+        "flags": ""
+      },
+      "id": 27,
+      "image_id": 5
+    },
+    {
+      "category_id": 7,
+      "segmentation": {
+        "size": [
+          557,
+          743
+        ],
+        "counts": "YPQ33Ya02O00000000000O010000O01000O2O0OhlY9"
+      },
+      "bbox": [
+        178.0,
+        188.0,
+        17.0,
+        7.0
+      ],
+      "area": 76,
+      "iscrowd": 0,
+      "attributes": {
+        "source": "ai_proposal",
+        "review_status": "needs_review",
+        "detector_class": "other_trash",
+        "detector_phrase": "cigarette butt",
+        "detector_score": 0.265766,
+        "sam_quality": 0.592439,
+        "candidate_classes": "other_trash",
+        "flags": "low_sam_quality"
+      },
+      "id": 28,
+      "image_id": 5
+    },
+    {
+      "category_id": 6,
+      "segmentation": {
+        "size": [
+          557,
+          743
+        ],
+        "counts": "Q[_51\\a0001O00001N1000010O0000000000000000001O0000000001O000000000000000000000000000000000000000000000001O0000000000000000000001OO10000000000001O00000000000000000000001O0000000O2O[_e5"
+      },
+      "bbox": [
+        322.0,
+        198.0,
+        87.0,
+        7.0
+      ],
+      "area": 351,
+      "iscrowd": 0,
+      "attributes": {
+        "source": "ai_proposal",
+        "review_status": "needs_review",
+        "detector_class": "plastic_other",
+        "detector_phrase": "plastic straw",
+        "detector_score": 0.256669,
+        "sam_quality": 0.851693,
+        "candidate_classes": "plastic_other",
+        "flags": ""
+      },
+      "id": 29,
+      "image_id": 5
+    },
+    {
+      "category_id": 2,
+      "segmentation": {
+        "size": [
+          557,
+          743
+        ],
+        "counts": "YWP542OPa09N2N101O00001O01O1N:F`\\]7"
+      },
+      "bbox": [
+        294.0,
+        311.0,
+        12.0,
+        17.0
+      ],
+      "area": 164,
+      "iscrowd": 0,
+      "attributes": {
+        "source": "ai_proposal",
+        "review_status": "needs_review",
+        "detector_class": "plastic_bottle",
+        "detector_phrase": "plastic bottle plastic bottle",
+        "detector_score": 0.254067,
+        "sam_quality": 0.923932,
+        "candidate_classes": "plastic_bottle",
+        "flags": ""
+      },
+      "id": 30,
+      "image_id": 5
+    }
+  ],
+  "qwen_raw_responses": [
+    "```json\n[\n    {\n        \"bbox_2d\": [0, 23, 756, 124],\n        \"label\": \"null\",\n        \"score\": 0.99,\n        \"reason\": \"The object is water, not trash.\"\n    }\n]\n```",
+    "```json\n{\"status\":\"suggestion|uncertain|not_trash\",\"class_name\":null,\"reason\":\"The object appears to be a small, light-colored item on the ground, which could be a piece of trash, but it is not clearly identifiable as any specific type of litter from the given taxonomy. It does not resemble a can, bottle, or other common types of litter that would fit into the provided categories.\"}\n```",
+    "```json\n{\"status\":\"suggestion|uncertain|not_trash\", \"class_name\":null, \"reason\":\"The object appears to be a small, elongated piece of metal, possibly a fragment of a larger item like a can or bottle cap, but the image resolution is low and details are not clear enough to definitively classify it. It does not match the criteria for any specific category provided.\"}\n```",
+    "```json\n{\"status\":\"suggestion|uncertain|not_trash\",\"class_name\":null,\"reason\":\"The object appears to be a piece of wood or a similar natural material, not a manufactured litter item like a can, bottle, or other trash\"}\n```",
+    "```json\n{\"status\":\"suggestion|uncertain|not_trash\", \"class_name\":null, \"reason\":\"The object appears to be a piece of wood or a similar natural material, not a manufactured litter item like a can, bottle, or other trash\"}\n```",
+    "```json\n[\n    {\n        \"bbox_2d\": [0, 113, 756, 560],\n        \"label\": \"plastic_other\",\n        \"reason\": \"small pieces of debris scattered on the sand\"\n    }\n]\n```",
+    "```json\n{\"status\":\"suggestion|uncertain|not_trash\", \"class_name\":null, \"reason\":\"The object appears to be a small, elongated shape on the ground, which could be a piece of debris or a natural object. Without more context or a clearer view, it's difficult to determine if it is litter or not. Therefore, it is suggested as 'uncertain' rather than 'not_trash'.\"}\n```",
+    "```json\n{\"status\":\"suggestion|uncertain|not_trash\", \"class_name\":null, \"reason\":\"The object appears to be a small white shell on sand, which is not considered trash. It does not match any of the provided categories.\"}\n```",
+    "```json\n[\n    {\n        \"bbox_2d\": [0, 48, 756, 559],\n        \"label\": \"uncertain\",\n        \"reason\": \"The image shows a beach with sand, some driftwood, and a distant view of water and mountains. There is no clear evidence of any specific types of litter such as cans, bottles, or other identifiable trash items.\"\n    }\n]\n```",
+    "```json\n[\n    {\n        \"bbox_2d\": [62, 109, 369, 143],\n        \"label\": \"null\",\n        \"score\": 0.5,\n        \"reason\": \"The objects appear to be natural debris rather than man-made litter.\"\n    }\n]\n```",
+    "```json\n{\"status\":\"suggestion|uncertain|not_trash\", \"class_name\":null, \"reason\":\"The object appears to be a piece of driftwood or a similar natural item, not trash\"}\n```",
+    "```json\n{\"status\":\"suggestion|uncertain|not_trash\", \"class_name\":null, \"reason\":\"The object appears to be a piece of paper or cardboard, but the image resolution is low and details are not clear enough to definitively classify it as one of the specified materials or objects.\"}\n```",
+    "```json\n[\n\t{\"bbox_2d\": [1, 103, 574, 158], \"label\": \"uncertain\", \"reason\": \"The objects appear to be small and indistinct, making it difficult to determine their material or identity with certainty.\"}\n]\n```",
+    "```json\n{\"status\":\"suggestion|uncertain|not_trash\", \"class_name\":null, \"reason\":\"The object appears to be driftwood, which is natural debris found on beaches and not considered trash. It does not match any of the provided categories for manufactured litter.\"}\n```",
+    "```json\n{\"status\":\"suggestion|uncertain|not_trash\", \"class_name\":null, \"reason\":\"The object appears to be a piece of debris, possibly metal, but the image resolution is low and details are unclear. It does not resemble a typical can, bottle, or other identifiable trash item.\"}\n```",
+    "```json\n{\"status\":\"suggestion|uncertain|not_trash\", \"class_name\":null, \"reason\":\"The object appears to be a piece of driftwood or a similar natural item, not trash\"}\n```",
+    "```json\n{\"status\":\"suggestion|uncertain|not_trash\", \"class_name\":null, \"reason\":\"The object appears to be a small, light-colored item on the sand, which could be a shell or a piece of driftwood. However, without more context or a clearer view, it is uncertain if it qualifies as trash. Therefore, it is classified as 'not_trash' with a suggestion that it might be a shell or driftwood.\"}\n```",
+    "```json\n{\"status\":\"suggestion|uncertain|not_trash\",\"class_name\":null,\"reason\":\"The object appears to be a fire hydrant, which is not trash and does not fit into any of the provided categories.\"}\n```",
+    "```json\n{\"status\":\"suggestion|uncertain|not_trash\", \"class_name\":null, \"reason\":\"The object appears to be a piece of wood or a similar material, not a typical litter item like a can, bottle, or other trash\"}\n```",
+    "```json\n{\"status\":\"suggestion|uncertain|not_trash\",\"class_name\":null,\"reason\":\"The object appears to be a piece of debris on the ground, possibly a shoe or part of a shoe, but the material is not clearly identifiable from the image provided.\"}\n```",
+    "```json\n[\n    {\n        \"bbox_2d\": [1, 19, 742, 130],\n        \"label\": \"null\",\n        \"score\": 0.8,\n        \"reason\": \"The image shows a beach with various types of litter, but no specific identifiable objects that match the given categories.\"\n    }\n]\n```",
+    "```json\n{\"status\":\"suggestion|uncertain|not_trash\",\"class_name\":null,\"reason\":\"The object appears to be a small piece of debris on the ground, but its exact nature is unclear due to the resolution and angle of the image.\"}\n```",
+    "```json\n{\"status\":\"suggestion|uncertain|not_trash\", \"class_name\":null, \"reason\":\"The object appears to be a small piece of debris on the ground, but its exact nature is unclear due to the low resolution and lack of distinct features that would allow for a confident classification among the given categories.\"}\n```",
+    "```json\n{\"status\":\"suggestion|uncertain|not_trash\",\"class_name\":null,\"reason\":\"The object appears to be a piece of green plastic, possibly a bottle cap or part of a container, but the exact material is unclear due to the low resolution and angle of the image.\"}\n```",
+    "```json\n{\"status\":\"suggestion|uncertain|not_trash\", \"class_name\":null, \"reason\":\"The object appears to be a piece of debris on the ground, but its exact nature is unclear due to the low resolution and lack of distinct features that would allow for a confident classification among the given categories.\"}\n```",
+    "```json\n{\"status\":\"suggestion|uncertain|not_trash\",\"class_name\":null,\"reason\":\"The object appears to be a piece of driftwood or a similar natural item, not manufactured litter.\"}\n```",
+    "```json\n{\"status\":\"suggestion|uncertain|not_trash\", \"class_name\":null, \"reason\":\"The image is too small and blurry to accurately identify the object's material or type.\"}\n```",
+    "```json\n{\"status\":\"suggestion|uncertain|not_trash\",\"class_name\":null,\"reason\":\"The object appears to be a small piece of debris on the ground, but its exact nature is unclear due to the low resolution and lack of distinct features that would allow for a confident classification among the given categories.\"}\n```",
+    "```json\n{\"status\":\"suggestion|uncertain|not_trash\",\"class_name\":null,\"reason\":\"The object appears to be a piece of wood or driftwood, which is not considered trash according to the given taxonomy.\"}\n```",
+    "```json\n{\"status\":\"suggestion|uncertain|not_trash\",\"class_name\":null,\"reason\":\"The object appears to be a piece of wood or driftwood, which is not considered trash according to the given taxonomy.\"}\n```"
+  ]
+}

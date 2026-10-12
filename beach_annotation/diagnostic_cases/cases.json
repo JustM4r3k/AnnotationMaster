@@ -1,0 +1,66 @@
+{
+  "description": "Five diagnostic regions selected from the uploaded first-five photos. Reviewer notes are never passed to Qwen. Coordinates are selected diagnostic boxes, not recovered detector boxes; the old run did not save detector boxes.",
+  "reference_annotate_sha256": "8580fcac779eb1a5a083593afcc612973ce7119bc562b7106783ff7c89c58cf0",
+  "cases": [
+    {
+      "id": "case_01",
+      "image": "photos/000000.jpg",
+      "source_sha256": "759ad6bf1d24deb20f8f4c32896650ca3769955844ed07aaf3c00e60447571ae",
+      "box_xyxy": [
+        0,
+        24,
+        765,
+        129
+      ],
+      "reviewer_note": "Water/sea region. A wide rectangle; the pipeline square includes much more of the beach. Natural background, not one bottle."
+    },
+    {
+      "id": "case_02",
+      "image": "photos/000000.jpg",
+      "source_sha256": "759ad6bf1d24deb20f8f4c32896650ca3769955844ed07aaf3c00e60447571ae",
+      "box_xyxy": [
+        300,
+        415,
+        490,
+        540
+      ],
+      "reviewer_note": "Mostly sand. Inspect the crop for small debris; this is a background control, not an exhaustive negative annotation."
+    },
+    {
+      "id": "case_03",
+      "image": "photos/000002.jpg",
+      "source_sha256": "ad35e4cd69dc94d85daec616f7f136a90b8febaa2fc073147116fd9e2b107a74",
+      "box_xyxy": [
+        0,
+        398,
+        186,
+        575
+      ],
+      "reviewer_note": "Driftwood at the bottom left. Natural wood; exact material identity should come from visible evidence."
+    },
+    {
+      "id": "case_04",
+      "image": "photos/000004.jpg",
+      "source_sha256": "8165011534477af99842fcda191c021ac9d9372c703ba57f20934a4f44925d0d",
+      "box_xyxy": [
+        112,
+        330,
+        183,
+        372
+      ],
+      "reviewer_note": "Dark slipper/footwear-like object. Manufactured litter; plastic versus rubber is not established from the photo."
+    },
+    {
+      "id": "case_05",
+      "image": "photos/000004.jpg",
+      "source_sha256": "8165011534477af99842fcda191c021ac9d9372c703ba57f20934a4f44925d0d",
+      "box_xyxy": [
+        384,
+        153,
+        424,
+        179
+      ],
+      "reviewer_note": "Small green fragment. Appearance suggests plastic, but the exact material and bottle origin are not established."
+    }
+  ]
+}
